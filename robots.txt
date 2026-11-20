@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://ha-yaml-generator.willpark.workers.dev/sitemap.xml
+Sitemap: https://ha.dimustech.net/sitemap.xml

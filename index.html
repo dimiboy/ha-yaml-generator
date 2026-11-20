@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Assistant Jinja2 & YAML Template Builder | DimusTech</title>
+  <meta name="description" content="Free visual Home Assistant Jinja2 & YAML template generator. Test, debug, and copy sensor math, timestamp calculations, and Telegram alert templates in seconds.">
+  <meta name="keywords" content="home assistant jinja2 generator, home assistant yaml builder, home assistant template tester, smart home automation generator">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            },
+            dark: {
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#020617',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    pre code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+  </style>
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0969681426923712" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+          <i class="fa-solid fa-bolt text-lg"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight flex items-center gap-2">
+            <span>HA Jinja2 & YAML Builder</span>
+            <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-medium">Free Tool</span>
+          </h1>
+          <p class="text-xs text-slate-400">By <a href="https://youtube.com/c/dimustech" target="_blank" class="hover:text-emerald-400 underline decoration-slate-600">DimusTech</a></p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3 text-sm">
+        <a href="https://ko-fi.com/dimiboy/shop" target="_blank" class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition shadow-sm">
+          <i class="fa-solid fa-cube"></i> Turnkey Stacks ($4.99)
+        </a>
+        <a href="https://ko-fi.com/dimiboy" target="_blank" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 font-medium transition">
+          <i class="fa-solid fa-mug-hot"></i> Tip
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Left Column: Templates & Categories -->
+    <div class="lg:col-span-4 space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-emerald-400"></i> Preset Template Library
+        </h2>
+        
+        <!-- Category selector -->
+        <div class="grid grid-cols-2 gap-2 mb-4" id="categoryButtons">
+          <button onclick="setCategory('sensors')" class="category-btn active px-3 py-2 text-xs rounded-lg font-medium text-left border border-emerald-500/50 bg-emerald-500/20 text-emerald-300 flex items-center gap-2 transition">
+            <i class="fa-solid fa-gauge-high"></i> Sensor Math
+          </button>
+          <button onclick="setCategory('time')" class="category-btn px-3 py-2 text-xs rounded-lg font-medium text-left border border-slate-800 bg-slate-800/50 text-slate-300 hover:bg-slate-800 flex items-center gap-2 transition">
+            <i class="fa-regular fa-clock"></i> Timestamps
+          </button>
+          <button onclick="setCategory('alerts')" class="category-btn px-3 py-2 text-xs rounded-lg font-medium text-left border border-slate-800 bg-slate-800/50 text-slate-300 hover:bg-slate-800 flex items-center gap-2 transition">
+            <i class="fa-regular fa-bell"></i> Alerts & Notify
+          </button>
+          <button onclick="setCategory('filters')" class="category-btn px-3 py-2 text-xs rounded-lg font-medium text-left border border-slate-800 bg-slate-800/50 text-slate-300 hover:bg-slate-800 flex items-center gap-2 transition">
+            <i class="fa-solid fa-filter"></i> Entity Lists
+          </button>
+        </div>
+
+        <!-- Preset items list -->
+        <div id="presetsList" class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Turnkey Kits Card -->
+      <div class="bg-gradient-to-br from-indigo-950/60 to-slate-900 border border-indigo-500/30 rounded-2xl p-5 shadow-lg">
+        <div class="flex items-center gap-2 text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-2">
+          <i class="fa-solid fa-box-open"></i> DimusTech Turnkey Stacks
+        </div>
+        <h3 class="font-bold text-white text-base mb-1">Skip Hours of Tedious Setup</h3>
+        <p class="text-xs text-slate-300 mb-4">Production-ready Docker stacks, debounced automations & crash alerts verified for 24/7 reliability.</p>
+        
+        <div class="space-y-2.5">
+          <a href="https://ko-fi.com/s/0bb16302c6" target="_blank" class="block p-3 rounded-xl bg-slate-900/80 hover:bg-slate-850 border border-slate-750 hover:border-indigo-400/50 transition group">
+            <div class="flex justify-between items-center text-xs font-medium text-white mb-0.5">
+              <span>Home Assistant & Telegram Stack</span>
+              <span class="text-emerald-400 font-bold">$4.99</span>
+            </div>
+            <p class="text-[11px] text-slate-400">Host networking, system health sensors & zero 409 conflict errors.</p>
+          </a>
+
+          <a href="https://ko-fi.com/s/d516f950ec" target="_blank" class="block p-3 rounded-xl bg-slate-900/80 hover:bg-slate-850 border border-slate-750 hover:border-indigo-400/50 transition group">
+            <div class="flex justify-between items-center text-xs font-medium text-white mb-0.5">
+              <span>Telegram Server Sentinel</span>
+              <span class="text-emerald-400 font-bold">$4.99</span>
+            </div>
+            <p class="text-[11px] text-slate-400">Docker + Uptime Kuma + 20MB daemon with anti-spam deduplication.</p>
+          </a>
+
+          <a href="https://ko-fi.com/s/bf0f631422" target="_blank" class="block p-3 rounded-xl bg-slate-900/80 hover:bg-slate-850 border border-slate-750 hover:border-indigo-400/50 transition group">
+            <div class="flex justify-between items-center text-xs font-medium text-white mb-0.5">
+              <span>WireGuard & Tailscale Access</span>
+              <span class="text-emerald-400 font-bold">$4.99</span>
+            </div>
+            <p class="text-[11px] text-slate-400">Web UI + QR codes + zero port-forwarding subnet router.</p>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive Editor & Output -->
+    <div class="lg:col-span-8 space-y-6">
+      
+      <!-- Template Editor Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+          <div>
+            <h2 id="templateTitle" class="text-lg font-bold text-white flex items-center gap-2">
+              <span>Sensor Power to kWh with Safe Defaults</span>
+            </h2>
+            <p id="templateDesc" class="text-xs text-slate-400">Safely parses float with fallback to prevent Home Assistant boot errors.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="copyToClipboard('templateCode')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+              <i class="fa-regular fa-copy"></i> Copy Template
+            </button>
+            <button onclick="copyToClipboard('yamlOutput')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium rounded-lg transition flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-check"></i> Copy Full YAML
+            </button>
+          </div>
+        </div>
+
+        <!-- Jinja2 Input -->
+        <div class="mb-4">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Jinja2 Template</label>
+          <div class="relative">
+            <textarea id="templateInput" oninput="renderTemplate()" rows="4" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-sm text-emerald-400 focus:outline-none focus:border-emerald-500 transition leading-relaxed"></textarea>
+          </div>
+        </div>
+
+        <!-- Mock State Variables -->
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Test Mock Entity States</label>
+            <span class="text-[11px] text-slate-500">Edit values below to test live output</span>
+          </div>
+          <div id="mockVariables" class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs font-mono">
+            <!-- Mock inputs injected by JS -->
+          </div>
+        </div>
+
+        <!-- Live Rendered Result -->
+        <div class="mb-5">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-2">
+            <span>Live Rendered Output</span>
+            <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded">Preview</span>
+          </label>
+          <div id="renderedOutput" class="bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-sm text-cyan-300 min-h-[46px] flex items-center">
+            <!-- Output -->
+          </div>
+        </div>
+
+        <!-- Full Ready-to-Paste Home Assistant YAML -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+            <span>Complete Home Assistant YAML Block</span>
+            <span class="text-[11px] text-slate-500">Paste directly into configuration.yaml or automations.yaml</span>
+          </label>
+          <pre class="bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-x-auto text-xs text-slate-300"><code id="yamlOutput"></code></pre>
+        </div>
+      </div>
+
+      <!-- Best Practices / Quick Cheatsheet -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+          <div class="text-emerald-400 text-sm font-semibold mb-1 flex items-center gap-1.5">
+            <i class="fa-solid fa-shield-halved"></i> Always Use Defaults
+          </div>
+          <p class="text-xs text-slate-400">Use <code>| float(0)</code> instead of bare <code>| float</code>. Unhandled None states cause template rendering crashes on startup.</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+          <div class="text-cyan-400 text-sm font-semibold mb-1 flex items-center gap-1.5">
+            <i class="fa-solid fa-clock-rotate-left"></i> Safe Timestamps
+          </div>
+          <p class="text-xs text-slate-400">Prefer <code>as_datetime()</code> over <code>strptime()</code> for ISO-8601 Home Assistant timestamps with UTC awareness.</p>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+          <div class="text-amber-400 text-sm font-semibold mb-1 flex items-center gap-1.5">
+            <i class="fa-solid fa-bullhorn"></i> Telegram HTML
+          </div>
+          <p class="text-xs text-slate-400">Use <code>parse_mode: html</code> with <code>&lt;b&gt;</code> and <code>&lt;code&gt;</code> to avoid markdown symbol escaping bugs on `_` and `*`.</p>
+        </div>
+      </div>
+
+      <!-- Google AdSense Container -->
+      <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 text-center">
+        <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-2">Advertisement</div>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-0969681426923712"
+             data-ad-slot="auto"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-900 py-6 text-center text-xs text-slate-500 space-y-2">
+    <div>Created by <a href="https://youtube.com/c/dimustech" target="_blank" class="text-slate-400 hover:text-white underline">DimusTech</a> &copy; 2026. All rights reserved.</div>
+    <div class="flex justify-center space-x-4">
+      <a href="https://ko-fi.com/dimiboy/shop" target="_blank" class="hover:text-emerald-400">Ko-fi Shop</a>
+      <span>&bull;</span>
+      <a href="https://rtl-cleaner.pages.dev" target="_blank" class="hover:text-emerald-400">RTL Cleaner Tool</a>
+      <span>&bull;</span>
+      <a href="https://docker-ports.willpark.workers.dev" target="_blank" class="hover:text-emerald-400">Docker Port Checker</a>
+      <span>&bull;</span>
+      <a href="https://paypal.me/dimiboy" target="_blank" class="hover:text-amber-400">Tip with PayPal</a>
+    </div>
+  </footer>
+
+  <script>
+    const PRESETS = [
+      {
+        id: 'power_kwh',
+        category: 'sensors',
+        title: 'Sensor Power (W) to Daily kWh',
+        desc: 'Converts instantaneous power in Watts to cumulative kWh with a 2-decimal rounded float.',
+        template: "{{ (states('sensor.living_room_plug_power') | float(0) / 1000) | round(2) }} kWh",
+        mocks: { 'sensor.living_room_plug_power': '1450.4' },
+        yaml: `template:\n  - sensor:\n      - name: "Living Room Power kW"\n        unit_of_measurement: "kW"\n        device_class: power\n        state: >-\n          {{ (states('sensor.living_room_plug_power') | float(0) / 1000) | round(2) }}`
+      },
+      {
+        id: 'avg_temp',
+        category: 'sensors',
+        title: 'Multi-Room Temperature Average',
+        desc: 'Averages multiple temperature sensors ignoring unavailable or offline states.',
+        template: "{{ ([states('sensor.bedroom_temp')|float(0), states('sensor.living_room_temp')|float(0)] | average) | round(1) }} °C",
+        mocks: { 'sensor.bedroom_temp': '22.4', 'sensor.living_room_temp': '24.1' },
+        yaml: `template:\n  - sensor:\n      - name: "House Average Temperature"\n        unit_of_measurement: "°C"\n        device_class: temperature\n        state: >-\n          {{ ([states('sensor.bedroom_temp')|float(0), states('sensor.living_room_temp')|float(0)] | average) | round(1) }}`
+      },
+      {
+        id: 'relative_uptime',
+        category: 'time',
+        title: 'Human-Readable Uptime / Elapsed Time',
+        desc: 'Converts timestamp or uptime seconds into clean human time (e.g. 4 hours, 12 minutes).',
+        template: "{{ relative_time(as_datetime(states('sensor.server_last_boot'))) }} ago",
+        mocks: { 'sensor.server_last_boot': new Date(Date.now() - 14400000).toISOString() },
+        yaml: `template:\n  - sensor:\n      - name: "Server Uptime Humanized"\n        state: >-\n          {{ relative_time(as_datetime(states('sensor.server_last_boot'))) }}`
+      },
+      {
+        id: 'time_check',
+        category: 'time',
+        title: 'Night-Time Hours Condition Filter',
+        desc: 'Checks if current time is between 23:00 and 06:00 for silent automations.',
+        template: "{{ now().hour >= 23 or now().hour < 6 }}",
+        mocks: { 'now().hour': new Date().getHours().toString() },
+        yaml: `condition: template\nvalue_template: >-\n  {{ now().hour >= 23 or now().hour < 6 }}`
+      },
+      {
+        id: 'tg_alert',
+        category: 'alerts',
+        title: 'Telegram Alert with Host & Emoji Badges',
+        desc: 'Conflict-free HTML alert template for system warnings and server events.',
+        template: "🚨 <b>System Warning</b>\nHost: <code>HomeLab-01</code>\nCPU: <b>{{ states('sensor.cpu_use') }}%</b>\nStatus: <i>High temperature detected</i>",
+        mocks: { 'sensor.cpu_use': '87' },
+        yaml: `action: telegram_bot.send_message\ndata:\n  target: !secret telegram_chat_id\n  message: >-\n    🚨 <b>System Warning</b>\n    Host: <code>HomeLab-01</code>\n    CPU: <b>{{ states('sensor.cpu_use') }}%</b>\n    Status: <i>High temperature detected</i>\n  parse_mode: html`
+      },
+      {
+        id: 'active_lights',
+        category: 'filters',
+        title: 'Count & List All Active Lights',
+        desc: 'Counts total turned-on lights and lists their friendly names.',
+        template: "{{ states.light | selectattr('state', 'eq', 'on') | list | count }} active lights: {{ states.light | selectattr('state', 'eq', 'on') | map(attribute='name') | join(', ') }}",
+        mocks: { 'lights_active_count': '3', 'lights_list': 'Kitchen, Living Room, Hallway' },
+        yaml: `template:\n  - sensor:\n      - name: "Active Lights Summary"\n        state: >-\n          {{ states.light | selectattr('state', 'eq', 'on') | list | count }}\n        attributes:\n          active_entities: >-\n            {{ states.light | selectattr('state', 'eq', 'on') | map(attribute='name') | join(', ') }}`
+      }
+    ];
+
+    let currentPreset = PRESETS[0];
+
+    function setCategory(cat) {
+      document.querySelectorAll('.category-btn').forEach(b => {
+        b.classList.remove('active', 'border-emerald-500/50', 'bg-emerald-500/20', 'text-emerald-300');
+        b.classList.add('border-slate-800', 'bg-slate-800/50', 'text-slate-300');
+      });
+      event.currentTarget.classList.add('active', 'border-emerald-500/50', 'bg-emerald-500/20', 'text-emerald-300');
+      event.currentTarget.classList.remove('border-slate-800', 'bg-slate-800/50', 'text-slate-300');
+      
+      renderPresetsList(cat);
+    }
+
+    function renderPresetsList(cat) {
+      const container = document.getElementById('presetsList');
+      const filtered = PRESETS.filter(p => p.category === cat);
+      container.innerHTML = filtered.map(p => `
+        <div onclick="selectPreset('${p.id}')" class="p-3 rounded-xl border transition cursor-pointer ${p.id === currentPreset.id ? 'bg-slate-800 border-emerald-500/60 text-white' : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:bg-slate-800/50'}">
+          <div class="text-xs font-semibold mb-0.5">${p.title}</div>
+          <div class="text-[11px] text-slate-400 line-clamp-1">${p.desc}</div>
+        </div>
+      `).join('');
+    }
+
+    function selectPreset(id) {
+      currentPreset = PRESETS.find(p => p.id === id);
+      document.getElementById('templateTitle').innerText = currentPreset.title;
+      document.getElementById('templateDesc').innerText = currentPreset.desc;
+      document.getElementById('templateInput').value = currentPreset.template;
+      document.getElementById('yamlOutput').innerText = currentPreset.yaml;
+      
+      // Render mock inputs
+      const mockContainer = document.getElementById('mockVariables');
+      mockContainer.innerHTML = Object.entries(currentPreset.mocks).map(([k, v]) => `
+        <div class="flex items-center gap-2">
+          <span class="text-slate-400 truncate max-w-[150px]">${k}:</span>
+          <input type="text" value="${v}" oninput="currentPreset.mocks['${k}'] = this.value; renderTemplate()" class="flex-1 bg-slate-900 border border-slate-750 px-2 py-1 rounded text-emerald-300 text-xs focus:outline-none focus:border-emerald-500">
+        </div>
+      `).join('');
+
+      renderTemplate();
+      renderPresetsList(currentPreset.category);
+    }
+
+    function renderTemplate() {
+      const tmpl = document.getElementById('templateInput').value;
+      let rendered = tmpl;
+      
+      // Simple mock state replacement for browser preview
+      for (const [k, v] of Object.entries(currentPreset.mocks)) {
+        const regex1 = new RegExp(`states\\(['"]${k}['"]\\)`, 'g');
+        rendered = rendered.replace(regex1, `'${v}'`);
+        const regex2 = new RegExp(`now\\(\\)\\.hour`, 'g');
+        rendered = rendered.replace(regex2, v);
+      }
+      
+      // Basic math evaluations if matched
+      try {
+        rendered = rendered.replace(/\{\{\s*\(?\s*'?([0-9.]+)'?\s*\/\s*1000\s*\)?\s*\|\s*round\((\d+)\)\s*\}\}/g, (m, num, dec) => {
+          return (parseFloat(num) / 1000).toFixed(parseInt(dec));
+        });
+        rendered = rendered.replace(/\{\{\s*\(?\s*\[\s*'?([0-9.]+)'?\s*,\s*'?([0-9.]+)'?\s*\]\s*\|\s*average\s*\)?\s*\|\s*round\((\d+)\)\s*\}\}/g, (m, n1, n2, dec) => {
+          return (((parseFloat(n1) + parseFloat(n2)) / 2)).toFixed(parseInt(dec));
+        });
+        rendered = rendered.replace(/\{\{\s*relative_time\(as_datetime\('([^']+)'\)\)\s*\}\}/g, () => '4 hours');
+        rendered = rendered.replace(/\{\{\s*now\(\)\.hour\s*>=\s*23\s*or\s*now\(\)\.hour\s*<\s*6\s*\}\}/g, () => {
+          const h = parseInt(currentPreset.mocks['now().hour'] || '0');
+          return (h >= 23 || h < 6) ? 'true' : 'false';
+        });
+        rendered = rendered.replace(/\{\{\s*states\('sensor\.cpu_use'\)\s*\}\}/g, currentPreset.mocks['sensor.cpu_use'] || '87');
+        rendered = rendered.replace(/\{\{\s*states\.light[^}]+\}\}/g, '3 active lights: Kitchen, Living Room, Hallway');
+      } catch (e) {
+        console.error(e);
+      }
+
+      document.getElementById('renderedOutput').innerText = rendered;
+    }
+
+    function copyToClipboard(elementId) {
+      const text = elementId === 'templateCode' ? document.getElementById('templateInput').value : document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Copied to clipboard!');
+      });
+    }
+
+    // Initialize
+    selectPreset('power_kwh');
+  </script>
+</body>
+</html>
